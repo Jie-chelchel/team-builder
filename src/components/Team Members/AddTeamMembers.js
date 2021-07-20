@@ -42,12 +42,12 @@ const AddTeamMember = (props) => {
   });
   const changeHandler = (event) => {
     setTeamMember({ ...teamMember, [event.target.name]: event.target.value });
-    console.log(teamMember);
   };
 
   const AddTMHandler = (e) => {
     e.preventDefault();
-    console.log(e);
+    props.onSubmitForm(teamMember);
+    setTeamMember({ memberName: "", email: "", role: "" });
   };
   return (
     <FormStyle>
@@ -59,14 +59,21 @@ const AddTeamMember = (props) => {
           type="text"
           name="memberName"
           onChange={changeHandler}
+          value={teamMember.memberName}
         />
         <label htmlFor="email"> </label>
         Enter Your email
-        <input id="email" type="email" name="email" onChange={changeHandler} />
+        <input
+          id="email"
+          type="email"
+          name="email"
+          onChange={changeHandler}
+          value={teamMember.email}
+        />
         <div>
-          <label htmlFor="email">Select Your Role</label>
+          <label htmlFor="role">Select Your Role</label>
 
-          <select name="role" onChange={changeHandler}>
+          <select name="role" onChange={changeHandler} value={teamMember.role}>
             <option value="">--select your roll--</option>
             <option value="Frontend Engineer">Frontend Engineer</option>
             <option value="Backend Engineer">Backend Engineer</option>
