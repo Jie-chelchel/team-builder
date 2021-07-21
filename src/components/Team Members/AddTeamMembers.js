@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import FormValidation from "../UI/FormValidation";
 
 const FormStyle = styled.div`
   width: 60%;
@@ -33,53 +34,99 @@ const FormStyle = styled.div`
     border-color: #741188;
   }
 `;
+const isNotEmpty = (value) => value.trim() !== "";
+const isEmail = (value) => value.includes("@");
 
 const AddTeamMember = (props) => {
-  const [teamMember, setTeamMember] = useState({
-    memberName: "",
-    email: "",
-    role: "",
-  });
-  const changeHandler = (event) => {
-    setTeamMember({ ...teamMember, [event.target.name]: event.target.value });
+  const {
+    value: enteredName,
+    isValid: enteredNameIsValid,
+    hasError: nameHasError,
+    valueChangeHandler: nameChangeHandler,
+    inputBlurHandler: nameInputBlurHandler,
+    reset: nameReset,
+  } = FormValidation(isNotEmpty);
+
+  const {
+    value: enteredEmail,
+    isValid: enteredEmailIsValid,
+    hasError: emailHasError,
+    valueChangeHandler: emailChangeHandler,
+    inputBlurHandler: emailInputBlurHandler,
+    reset: emailReset,
+  } = FormValidation(isEmail);
+
+  const {
+    value: selectedValue,
+    isValid: selectedRoleIsValid,
+    hasError: RoleHasError,
+    valueChangeHandler: roleChangeHandler,
+    inputBlurHandler: roleInputBlurHandler,
+    reset: roleReset,
+  } = FormValidation(isNotEmpty);
+
+  let formIsValid = false;
+  if (enteredNameIsValid && enteredEmailIsValid && selectedRoleIsValid) {
+    formIsValid = true;
+  }
+  const submitHandler = (e) => {
+    e.preventDefault();
+    if (!formIsValid) {
+      return;
+    }
+
+    props.onSubmitForm(enteredName, enteredEmail, selectedValue);
+    console.log(enteredName);
+    console.log(enteredEmail);
+    console.log(selectedValue);
+    nameReset();
+    emailReset();
+    roleReset();
   };
 
-  const AddTMHandler = (e) => {
-    e.preventDefault();
-    props.onSubmitForm(teamMember);
-    setTeamMember({ memberName: "", email: "", role: "" });
-  };
   return (
     <FormStyle>
-      <form onSubmit={AddTMHandler}>
-        <label htmlFor="memberName"> </label>
-        Enter Your Name
-        <input
-          id="memberName"
-          type="text"
-          name="memberName"
-          onChange={changeHandler}
-          value={teamMember.memberName}
-        />
-        <label htmlFor="email"> </label>
-        Enter Your email
-        <input
-          id="email"
-          type="email"
-          name="email"
-          onChange={changeHandler}
-          value={teamMember.email}
-        />
+      <form onSubmit={submitHandler}>
+        {/* {!formIsValid && <p>please enter all required area</p>}{" "} */}
+        <div>
+          <label htmlFor="memberName"> </label>
+          Enter Your Name
+          <input
+            id="memberName"
+            type="text"
+            onBlur={nameInputBlurHandler}
+            onChange={nameChangeHandler}
+            value={enteredName}
+          />
+          {nameHasError && <p>Name must not be empty</p>}
+        </div>
+        <div>
+          <label htmlFor="email"> </label>
+          Enter Your email
+          <input
+            id="email"
+            type="email"
+            onChange={emailChangeHandler}
+            onBlur={emailInputBlurHandler}
+            value={enteredEmail}
+          />
+          {emailHasError && <p>Please enter a valid email.</p>}
+        </div>
         <div>
           <label htmlFor="role">Select Your Role</label>
 
-          <select name="role" onChange={changeHandler} value={teamMember.role}>
+          <select
+            onChange={roleChangeHandler}
+            value={selectedValue}
+            onBlur={roleInputBlurHandler}
+          >
             <option value="">--select your roll--</option>
             <option value="Frontend Engineer">Frontend Engineer</option>
             <option value="Backend Engineer">Backend Engineer</option>
             <option value="Designer">Designer</option>
             <option value="Tester">Tester</option>
           </select>
+          {RoleHasError && <p>Please select a role.</p>}
           <button>Submit</button>
         </div>
       </form>

@@ -4,23 +4,17 @@ import AddTeamMember from "./components/Team Members/AddTeamMembers";
 import { useState } from "react";
 import MemberList from "./components/MemeberList";
 
-const initialFormValues = {
-  memberName: "",
-  email: "",
-  role: "",
-};
-
 function App() {
   const [memberList, setMemberList] = useState([]);
 
-  const formSubmitHandler = (teamMember) => {
+  const formSubmitHandler = (enteredName, enteredEmail, selectedValue) => {
     setMemberList((prevMemberList) => {
       return [
         ...prevMemberList,
         {
-          "Team Member Name": teamMember.memberName,
-          "Team Member email": teamMember.email,
-          "Team Member role": teamMember.role,
+          "Team Member Name": enteredName,
+          "Team Member email": enteredEmail,
+          "Team Member role": selectedValue,
         },
       ];
     });
